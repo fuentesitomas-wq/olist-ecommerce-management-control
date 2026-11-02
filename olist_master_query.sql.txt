@@ -1,0 +1,83 @@
+WITH 
+-- 1. Agregamos los pagos por orden para identificar cuotas y monto total pagado
+order_payments AS (
+  SELECT 
+    order_id,
+    MAX(payment_type) AS primary_payment_type,
+    MAX(payment_installments) AS max_installments,
+    ROUND(SUM(payment_value), 2) AS total_payment_value
+  FROM `divine-outlet-502323-q1.olist_ecommerce.payments`
+  GROUP BY order_id
+),
+
+-- 2. Unimos items con productos y nuestras macro-categorías limpias de Sheets
+order_items_cat AS (
+  SELECT 
+    i.order_id,
+    COUNT(i.order_item_id) AS total_items,
+    ROUND(SUM(i.price), 2) AS total_price,
+    ROUND(SUM(i.freight_value), 2) AS total_freight,
+    -- Tomamos la macro-categoría principal de la orden
+     COALESCE(MAX(c.macro_category), 'Unclassified') AS macro_category,
+    COALESCE(MAX(c.clean_category_english), 'Unclassified') AS category_english
+  FROM `divine-outlet-502323-q1.olist_ecommerce.items` AS i
+  LEFT JOIN `divine-outlet-502323-q1.olist_ecommerce.products` AS p
+    ON i.product_id = p.product_id
+  LEFT JOIN `divine-outlet-502323-q1.olist_ecommerce.dim_categories` AS c
+    ON p.product_category_name = c.product_category_name
+  GROUP BY i.order_id
+),
+
+-- 3. Obtenemos la calificación promedio por orden
+order_reviews AS (
+  SELECT 
+    order_id,
+    ROUND(AVG(review_score), 1) AS avg_review_score
+  FROM `divine-outlet-502323-q1.olist_ecommerce.reviews`
+  GROUP BY order_id
+)
+
+-- 4. Consulta principal: Cruce final y reglas de negocio (CASE WHEN & DATETIME_DIFF)
+SELECT 
+  o.order_id,
+  o.customer_id,
+  o.order_status,
+  DATE(o.order_purchase_timestamp) AS purchase_date,
+  
+  -- Métricas de Categoría y Producto
+  ic.macro_category,
+  ic.category_english,
+  ic.total_items,
+  ic.total_price,
+  ic.total_freight,
+  
+  -- Métricas de Pago y Segmentación de Cuotas (Hipótesis B)
+  p.primary_payment_type,
+  p.max_installments,
+  p.total_payment_value,
+  CASE 
+    WHEN p.primary_payment_type = 'credit_card' AND p.max_installments >= 3 THEN 'Credit Card (3+ Installments)'
+    WHEN p.primary_payment_type = 'credit_card' AND p.max_installments < 3 THEN 'Credit Card (1-2 Installments)'
+    ELSE 'Other Payment Methods (Boleto/Voucher/Debit)'
+  END AS payment_segment,
+
+  -- KPIs Logísticos: Horas de despacho al transportista y días de entrega total
+  DATETIME_DIFF(o.order_delivered_carrier_date, o.order_approved_at, HOUR) AS hours_to_carrier,
+  DATE_DIFF(DATE(o.order_delivered_customer_date), DATE(o.order_estimated_delivery_date), DAY) AS delivery_delay_days,
+  
+  CASE 
+    WHEN DATETIME_DIFF(o.order_delivered_carrier_date, o.order_approved_at, HOUR) <= 48 THEN 'Fast Dispatch (<= 48h)'
+    ELSE 'Slow Dispatch (> 48h)'
+  END AS dispatch_sla_status,
+
+  -- Satisfacción del Cliente
+  r.avg_review_score
+
+FROM `divine-outlet-502323-q1.olist_ecommerce.orders` AS o
+INNER JOIN order_items_cat AS ic ON o.order_id = ic.order_id
+INNER JOIN order_payments AS p ON o.order_id = p.order_id
+LEFT JOIN order_reviews AS r ON o.order_id = r.order_id
+WHERE o.order_status = 'delivered'
+  AND o.order_approved_at IS NOT NULL
+  AND o.order_delivered_carrier_date IS NOT NULL
+  AND DATETIME_DIFF(o.order_delivered_carrier_date, o.order_approved_at, HOUR) >= 0;
