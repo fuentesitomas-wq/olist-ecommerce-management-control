@@ -1,4 +1,4 @@
-# 📊 Auditoría de Control de Gestión: Rentabilidad por Cuotas (AOV), SLA Logístico y Sobrecostos de Flete
+# Auditoría de Control de Gestión: Rentabilidad por Cuotas (AOV), SLA Logístico y Sobrecostos de Flete
 **Caso de Estudio End-to-End: Brazilian E-Commerce Public Dataset by Olist (+95.000 Órdenes)**
 
 **Autor:** Tomás Fuentes Ibañez — *Analista de Datos y Control de Gestión*  
@@ -6,7 +6,7 @@
 
 ---
 
-## 📌 1. Resumen Ejecutivo (Executive Summary)
+## 1. Resumen Ejecutivo (Executive Summary)
 Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial y Operativo** sobre una base relacional de **95.353 órdenes entregadas** en el marketplace Olist. Siguiendo el marco de análisis de datos de 6 fases de Google (*Ask, Prepare, Process, Analyze, Share, Act*), se evaluó cómo el financiamiento en cuotas impacta el ticket promedio (AOV) y cómo las demoras operativas de despacho afectan la satisfacción del cliente y los márgenes logísticos.
 
 ### Hallazgos Clave:
@@ -16,7 +16,7 @@ Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial
 
 ---
 
-## 🏗️ 2. Arquitectura del Proyecto y Flujo de Trabajo
+## 2. Arquitectura del Proyecto y Flujo de Trabajo
 
 1. **Hojas de Cálculo (Google Sheets / Excel) — *Normalización de Catálogo*:**
    * Auditoría de la tabla maestra de categorías (`dim_categories_clean.csv`).
@@ -33,7 +33,7 @@ Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial
 
 ---
 
-## 💻 3. Código SQL Destacado (BigQuery)
+## 3. Código SQL Destacado (BigQuery)
 
 ```sql
 WITH 
