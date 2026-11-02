@@ -1,4 +1,4 @@
-# 📊 Auditoría de Control de Gestión: Rentabilidad por Cuotas (AOV), SLA Logístico y Sobrecostos de Flete
+# Auditoría de Control de Gestión: Rentabilidad por Cuotas (AOV), SLA Logístico y Sobrecostos de Flete
 **Caso de Estudio End-to-End: Brazilian E-Commerce Public Dataset by Olist (+95.000 Órdenes)**
 
 **Autor:** Tomás Fuentes Ibañez — *Analista de Datos y Control de Gestión*  
@@ -6,7 +6,7 @@
 
 ---
 
-## 📌 1. Resumen Ejecutivo (Executive Summary)
+## 1. Resumen Ejecutivo (Executive Summary)
 Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial y Operativo** sobre una base relacional de **95.353 órdenes entregadas** en el marketplace Olist. Siguiendo el marco de análisis de datos de 6 fases de Google (*Ask, Prepare, Process, Analyze, Share, Act*), se evaluó cómo el financiamiento en cuotas impacta el ticket promedio (AOV) y cómo las demoras operativas de despacho afectan la satisfacción del cliente y los márgenes logísticos.
 
 ### Hallazgos Clave:
@@ -16,7 +16,7 @@ Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial
 
 ---
 
-## 🏗️ 2. Arquitectura del Proyecto y Flujo de Trabajo
+## 2. Arquitectura del Proyecto y Flujo de Trabajo
 
 1. **Hojas de Cálculo (Google Sheets / Excel) — *Normalización de Catálogo*:**
    * Auditoría de la tabla maestra de categorías ([`dim_product_categories_cleaned.csv`](./dim_product_categories_cleaned.csv)).
@@ -33,7 +33,7 @@ Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial
 
 ---
 
-## 💻 3. Código SQL Destacado (BigQuery)
+## 3. Código SQL Destacado (BigQuery)
 
 ```sql
 WITH 
@@ -110,7 +110,7 @@ WHERE o.order_status = 'delivered'
 
 ---
 
-## 📈 4. Resultados Estadísticos y Visualizaciones (Python)
+## 4. Resultados Estadísticos y Visualizaciones (Python)
 
 ### A. Rendimiento Financiero por Segmento de Pago (AOV)
 
@@ -141,7 +141,7 @@ WHERE o.order_status = 'delivered'
 
 ---
 
-## 🎯 5. Recomendaciones Estratégicas de Control de Gestión
+## 5. Recomendaciones Estratégicas de Control de Gestión
 
 1. **Priorización Operativa (Fast-Track SLA) para Pedidos de Alto Valor:** Implementar una alerta automatizada en el sistema de gestión de bodegas/vendedores que priorice el despacho dentro de las primeras **24 a 36 horas** para toda orden pagada en 3+ cuotas o superior a R$ 150, protegiendo el segmento que aporta casi el doble de ingresos por transacción.
 2. **Auditoría de Tarifas de Flete en Rubros Críticos:** Revisar los contratos de transporte y dimensionamiento de paquetes en las categorías *Home, Furniture & Garden* y *Auto, Industry & Services*, estableciendo un control preventivo de margen cuando el ratio `freight_to_price_ratio` supere el 25% del valor del producto o el umbral de R$ 39,27.
