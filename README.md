@@ -1,4 +1,4 @@
-# Auditoría de Control de Gestión: Rentabilidad por Cuotas (AOV), SLA Logístico y Sobrecostos de Flete
+# Auditoría de Control de Gestión: Ticket Promedio por Cuotas (AOV), SLA Logístico y Sobrecostos de Flete
 **Caso de Estudio End-to-End: Brazilian E-Commerce Public Dataset by Olist (+95.000 Órdenes)**
 
 **Autor:** Tomás Fuentes Ibañez — *Analista de Datos y Control de Gestión*  
@@ -7,11 +7,11 @@
 ---
 
 ## 1. Resumen Ejecutivo (Executive Summary)
-Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial y Operativo** sobre una base relacional de **95.353 órdenes entregadas** en el marketplace Olist. Siguiendo el marco de análisis de datos de 6 fases de Google (*Ask, Prepare, Process, Analyze, Share, Act*), se evaluó cómo el financiamiento en cuotas impacta el ticket promedio (AOV) y cómo las demoras operativas de despacho afectan la satisfacción del cliente y los márgenes logísticos.
+Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial y Operativo** sobre una base relacional de **95.353 órdenes entregadas** en el marketplace Olist. Siguiendo el marco de análisis de datos de 6 fases de Google (*Ask, Prepare, Process, Analyze, Share, Act*), se evaluó cómo el financiamiento en cuotas impacta el ticket promedio (AOV) y cómo las demoras operativas de despacho afectan la satisfacción del cliente y los costos logísticos.
 
 ### Hallazgos Clave:
 1. **Impacto Financiero de las Cuotas (+99,55% en AOV):** Los clientes que compran con tarjeta de crédito en **3 o más cuotas** representan el mayor volumen transaccional (36.733 órdenes) y registran un ticket promedio de **R$ 218,95**, casi duplicando el gasto de quienes pagan en 1-2 cuotas (**R$ 109,72**, +99,55%) y superando en **+53,87%** a otros medios de pago (**R$ 142,30**). Al aislar valores extremos mediante la mediana, el incremento real se mantiene en **+79,93%** (R$ 146,68 vs. R$ 81,52).
-2. **Riesgo Operativo por Incumplimiento de SLA (>48h):** Superar las **48 horas** desde la aprobación del pago hasta la entrega al transportista (*Slow Dispatch > 48h*) provoca que la calificación promedio del segmento de alto valor (3+ cuotas) caiga de **4,22 a 3,99 estrellas**. La tasa de reseñas críticas (1 y 2 estrellas) se dispara del **11,54% al 16,66%** (+5,12 puntos porcentuales; un **aumento relativo del 44,37%** en insatisfacción), poniendo en riesgo la retención de 17.456 pedidos de alto margen.
+2. **Riesgo Operativo por Incumplimiento de SLA (>48h):** Superar las **48 horas** desde la aprobación del pago hasta la entrega al transportista (*Slow Dispatch > 48h*) provoca que la calificación promedio del segmento de alto valor (3+ cuotas) caiga de **4,22 a 3,99 estrellas**. La tasa de reseñas críticas (1 y 2 estrellas) se dispara del **11,54% al 16,66%** (+5,12 puntos porcentuales; un **aumento relativo del 44,37%** en insatisfacción), poniendo en riesgo la retención de 17.456 pedidos de alto valor.
 3. **Auditoría de Sobrecostos Logísticos (Outliers):** Aplicando el método estadístico del Rango Intercuartílico (IQR), se determinó un techo presupuestario normal de flete de **R$ 39,27**. Se detectaron **9.569 órdenes (10,04% del total)** con sobrecostos atípicos de envío, concentradas principalmente en las macro-categorías *Home, Furniture & Garden*, *Auto, Industry & Services* y *Tech & Electronics*.
 
 ---
@@ -21,7 +21,7 @@ Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial
 1. **Hojas de Cálculo (Google Sheets / Excel) — *Normalización de Catálogo*:**
    * Auditoría de la tabla maestra de categorías ([`dim_categories_cleaned.csv`](./dim_categories_cleaned.csv)).
    * Limpieza de cadenas de texto y corrección de errores tipográficos de origen mediante funciones anidadas (`PROPER`, `TRIM`, `SUBSTITUTE`).
-   * Agrupación lógica de las **71 líneas de productos** en **6 Macro-Categorías Comerciales** utilizando condicionales avanzados (`IFS` + `REGEXMATCH`) para facilitar el control de márgenes por rubro.
+   * Agrupación lógica de las **71 líneas de productos** en **6 Macro-Categorías Comerciales** utilizando condicionales avanzados (`IFS` + `REGEXMATCH`) para facilitar el análisis de ventas y ticket por rubro.
 2. **SQL (Google BigQuery) — *Modelado Relacional e Ingeniería de Variables*:**
    * Consolidación de **6 tablas relacionales** (`orders`, `items`, `payments`, `products`, `reviews` y `dim_categories`) evitando la multiplicación de filas (*fan-out*) mediante el uso modular de **CTEs (`WITH`)** y funciones de agregación.
    * Creación de reglas de negocio e indicadores de nivel de servicio (SLA) con `CASE WHEN` y cálculo preciso de tiempos de procesamiento mediante `DATETIME_DIFF` y `DATE_DIFF`.
@@ -144,5 +144,5 @@ WHERE o.order_status = 'delivered'
 ## 5. Recomendaciones Estratégicas de Control de Gestión
 
 1. **Priorización Operativa (Fast-Track SLA) para Pedidos de Alto Valor:** Implementar una alerta automatizada en el sistema de gestión de bodegas/vendedores que priorice el despacho dentro de las primeras **24 a 36 horas** para toda orden pagada en 3+ cuotas o superior a R$ 150, protegiendo el segmento que aporta casi el doble de ingresos por transacción.
-2. **Auditoría de Tarifas de Flete en Rubros Críticos:** Revisar los contratos de transporte y dimensionamiento de paquetes en las categorías *Home, Furniture & Garden* y *Auto, Industry & Services*, estableciendo un control preventivo de margen cuando el ratio `freight_to_price_ratio` supere el 25% del valor del producto o el umbral de R$ 39,27.
+2. **Auditoría de Tarifas de Flete en Rubros Críticos:** Revisar los contratos de transporte y dimensionamiento de paquetes en las categorías *Home, Furniture & Garden* y *Auto, Industry & Services*, estableciendo un control preventivo de costo logístico cuando el ratio `freight_to_price_ratio` supere el 25% del valor del producto o el umbral de R$ 39,27.
 3. **Incentivos Comerciales Basados en Cumplimiento Logístico:** Condicionar la visibilidad destacada de los vendedores (*Sellers*) dentro del marketplace a mantener una tasa de cumplimiento de despacho (`<= 48h`) superior al 85%.
