@@ -2,7 +2,7 @@
 **Caso de Estudio End-to-End: Brazilian E-Commerce Public Dataset by Olist (+95.000 Órdenes)**
 
 **Autor:** Tomás Fuentes Ibañez — *Analista de Datos y Control de Gestión*  
-**Stack Tecnológico:** Google Sheets / Excel | Google BigQuery (SQL) | Python (Pandas, Seaborn) | Power BI / Tableau *(En integración)*
+**Stack Tecnológico:** Google Sheets / Excel | Google BigQuery (SQL) | Python (Pandas, Seaborn) | Power BI
 
 ---
 
@@ -140,8 +140,23 @@ WHERE o.order_status = 'delivered'
 ![Distribución de Costos de Flete y Outliers](./2_freight_outliers_boxplot.png)
 
 ---
+## 5. Dashboard en Power BI
 
-## 5. Recomendaciones Estratégicas de Control de Gestión
+Dashboard interactivo de 2 páginas que traduce los hallazgos del análisis en KPIs y visualizaciones para toma de decisiones.
+
+### Página 1: Resumen ejecutivo
+![Resumen ejecutivo](pagina1_resumen_ejecutivo.png)
+
+El 46% de las órdenes se despacha en más de 48 h, y las reseñas negativas suben hasta 5 puntos. El segmento de 3+ cuotas (ticket R$ 218,95) es el más expuesto.
+
+### Página 2: Costos logísticos
+![Costos logísticos](pagina2_costos_logisticos.png)
+
+El 10,04% de las órdenes (9.569) tiene un flete atípico sobre R$ 39,27, concentrado en Home, Furniture & Garden y Auto, Industry & Services.
+
+📄 [Ver PDF del dashboard](dashboard_olist.pdf)
+
+## 6. Recomendaciones Estratégicas de Control de Gestión
 
 1. **Priorización Operativa (Fast-Track SLA) para Pedidos de Alto Valor:** Implementar una alerta automatizada en el sistema de gestión de bodegas/vendedores que priorice el despacho dentro de las primeras **24 a 36 horas** para toda orden pagada en 3+ cuotas o superior a R$ 150, protegiendo el segmento que aporta casi el doble de ingresos por transacción.
 2. **Auditoría de Tarifas de Flete en Rubros Críticos:** Revisar los contratos de transporte y dimensionamiento de paquetes en las categorías *Home, Furniture & Garden* y *Auto, Industry & Services*, estableciendo un control preventivo de costo logístico cuando el ratio `freight_to_price_ratio` supere el 25% del valor del producto o el umbral de R$ 39,27.
