@@ -19,7 +19,7 @@ Este proyecto ejecuta una auditoría integral de **Control de Gestión Comercial
 ## 2. Arquitectura del Proyecto y Flujo de Trabajo
 
 1. **Hojas de Cálculo (Google Sheets / Excel) — *Normalización de Catálogo*:**
-   * Auditoría de la tabla maestra de categorías ([`dim_product_categories_cleaned.csv`](./dim_product_categories_cleaned.csv)).
+   * Auditoría de la tabla maestra de categorías ([`dim_categories_cleaned.csv`](./dim_categories_cleaned.csv)).
    * Limpieza de cadenas de texto y corrección de errores tipográficos de origen mediante funciones anidadas (`PROPER`, `TRIM`, `SUBSTITUTE`).
    * Agrupación lógica de las **71 líneas de productos** en **6 Macro-Categorías Comerciales** utilizando condicionales avanzados (`IFS` + `REGEXMATCH`) para facilitar el control de márgenes por rubro.
 2. **SQL (Google BigQuery) — *Modelado Relacional e Ingeniería de Variables*:**
